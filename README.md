@@ -12,8 +12,7 @@
 ```
 
 2. Install chrome on your heroku app. Add the [google-chrome buildpack](https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-google-chrome).  
-   - `heroku create --buildpack https://github.com/heroku/heroku-buildpack-google-chrome.git` or
-   - manually add from the app's **dashboard** -> **settings**
+   - Add manually add from the app's **dashboard** -> **settings**
 
 
 @weaponsforge  
