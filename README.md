@@ -1,3 +1,27 @@
+# prenderer
+
+> Forked from main prenderer/prenderer repository.  
+> Updated to run on heroku.
+
+
+### Heroku Setup
+
+1. Add an npm `start` script in package.json.  
+```
+"start": "node server.js"
+```
+
+2. Install chrome on your heroku app. Add the [google-chrome buildpack](https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-google-chrome).  
+   - `heroku create --buildpack https://github.com/heroku/heroku-buildpack-google-chrome.git` or
+   - manually add from the app's **dashboard** -> **settings**
+
+
+@weaponsforge  
+20200404
+
+
+
+
 Prerender
 ===========================
 
