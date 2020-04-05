@@ -1,4 +1,4 @@
-# prerenderer
+# prerender
 
 > Forked from main prenderer/prenderer repository.  
 > Updated to run on heroku.
