@@ -11,9 +11,30 @@
 "start": "node server.js"
 ```
 
-2. Install chrome on your heroku app. Add the [google-chrome buildpack](https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-google-chrome).  
-   - Add manually add from the app's **dashboard** -> **settings**
+2. Install chrome on your heroku app.
+	- Add the [google-chrome buildpack](https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-google-chrome) using the heroku cli.  
+`heroku buildpacks:add https://github.com/heroku/heroku-buildpack-google-chrome`
+	- Add the **chromedriver** buildpack using the cli.  
+`heroku buildpacks:add https://github.com/heroku/heroku-buildpack-chromedriver`
+	- Add the **NodeJS** buildpack.
+		- Add manually add from the app's **dashboard** -> **settings**
+	- set the **GOOGLE\_CHROME\_BIN** variable on heroku's environment variables  
+`heroku config:set GOOGLE_CHROME_BIN=/app/.apt/opt/google/chrome/chrome`
+3. Update `server.js`.
+	- use heroku's dynamic port set on `process.env.PORT`.
+	- add the `chromeLocation` settings
+	- add the `chromeFlags` settings  
 
+			const PORT = process.env.PORT || 3000
+			var server = prerender({
+			   chromeLocation: process.env.GOOGLE_CHROME_BIN,
+			   chromeFlags: ['--no-sandbox', '--headless', '--disable-gpu', '--remote-debugging-port=9222', '--hide-scrollbars'],
+			   port: PORT
+			});
+
+4. Deploy to heroku.
+5. Test the deployment.  
+[http://prerenderservice.herokuapp.com/render?url=https://www.google.com/](http://prerenderservice.herokuapp.com/render?url=https://www.google.com/)
 
 @weaponsforge  
 20200404
