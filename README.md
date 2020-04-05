@@ -1,27 +1,64 @@
-# prenderer
+# prerenderer
 
 > Forked from main prenderer/prenderer repository.  
 > Updated to run on heroku.
 
+This forked [**prerender**](https://github.com/prerender/prerender) project will serve a self-hosted prerender service hosted on heroku, to be used by the [prerender-node](https://github.com/weaponsforge/prerender-node) express app middleware to dynamically render javascript websites.
 
-### Heroku Setup
+### Prerequisites
 
-1. Add an npm `start` script in package.json.  
+1. Heroku account
+   - a blank heroku app where the prerender service will be hosted
+
+2. (Optional) Github account
+   - for easy CI/CD of the prerender service app
+
+3. Windows OS 64 bit
+
+4. NodeJS
+   - node version 10.16.3
+   - npm version 6.9.0
+
+
+### Content
+
+- Heroku App Setup
+- Prerenderer Service Setup
+- Test and Deploy Prenderer to Heroku
+- Using the Service: Create an Express Web App
+
+
+---
+
+
+### Heroku App Setup
+
+Install chrome on your heroku app.
+
+> **INFO:**  
+> Generally, prerender requires Chrome to be installed on Ubuntu OS to work. Follow appropriate Chrome installation instructions for specific Ubuntu OS versions.
+
+1. Add the [google-chrome buildpack](https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-google-chrome) using the heroku cli.  
+`heroku buildpacks:add https://github.com/heroku/heroku-buildpack-google-chrome`
+
+2. Add the **chromedriver** buildpack using the heroku cli.  
+`heroku buildpacks:add https://github.com/heroku/heroku-buildpack-chromedriver`
+
+3. Add the **NodeJS** buildpack. Add manually add from the app's **dashboard** -> **settings** -> **Buildpacks**
+4. set the **GOOGLE\_CHROME\_BIN** variable on heroku's environment variables  
+`heroku config:set GOOGLE_CHROME_BIN=/app/.apt/opt/google/chrome/chrome`
+
+### Prerenderer Service Setup
+
+1. Fork or clone the original [**prerender**](https://github.com/prerender/prerender) repository if you'd like to use that instead of this customized forked repository.
+
+2. Add an npm `start` script in package.json.  
 ```
 "start": "node server.js"
 ```
 
-2. Install chrome on your heroku app.
-	- Add the [google-chrome buildpack](https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-google-chrome) using the heroku cli.  
-`heroku buildpacks:add https://github.com/heroku/heroku-buildpack-google-chrome`
-	- Add the **chromedriver** buildpack using the cli.  
-`heroku buildpacks:add https://github.com/heroku/heroku-buildpack-chromedriver`
-	- Add the **NodeJS** buildpack.
-		- Add manually add from the app's **dashboard** -> **settings**
-	- set the **GOOGLE\_CHROME\_BIN** variable on heroku's environment variables  
-`heroku config:set GOOGLE_CHROME_BIN=/app/.apt/opt/google/chrome/chrome`
 3. Update `server.js`.
-	- use heroku's dynamic port set on `process.env.PORT`.
+	- set prerender to use heroku's dynamic port on `process.env.PORT`.
 	- add the `chromeLocation` settings
 	- add the `chromeFlags` settings  
 
@@ -31,13 +68,76 @@
 			   chromeFlags: ['--no-sandbox', '--headless', '--disable-gpu', '--remote-debugging-port=9222', '--hide-scrollbars'],
 			   port: PORT
 			});
+	> **INFO:**  
+	> `chromeLocation` AND `chromeFlags` may need not be set when you are working on a windows OS machine with an installed Chrome browser.
+4. Create a **.env** file from **.env.example**.
+	- Set `NODE_ENV=development` when working in development or localhost mode.
+	- Set `NODE_ENV=production` when working or deploying to production.
+
 
 4. Deploy to heroku.
+
 5. Test the deployment.  
-[http://prerenderservice.herokuapp.com/render?url=https://www.google.com/](http://prerenderservice.herokuapp.com/render?url=https://www.google.com/)
+   - [http://prerenderservice.herokuapp.com/render?url=https://www.google.com/](http://prerenderservice.herokuapp.com/render?url=https://www.google.com/) or 
+   - [http://prerenderservice.herokuapp.com/https://www.google.com/](http://prerenderservice.herokuapp.com/https://www.google.com/)
+
+
+### Using the Service: Create an Express Web App
+
+1. Create a basic express web app server that can serve static website files. Refer to a basic express server [demo](https://github.com/weaponsforge/express-basic) for more information:  
+
+		const express = require('express')
+		const PORT = process.env.PORT || 3000
+		const path = require('path')
+		const app = express()
+		app.set('trust proxy', 1)
+
+		app.use(express.static('public'))
+		app.get('/test', (req, res) => {
+		  res.status(200).send({message: 'Okay, it Works!'})
+		})
+
+		app.listen(PORT, () => {
+		  console.log(`listening on http://localhost:${PORT}`)
+		})
+
+
+2. Add the `prerender-node` middleware to the nodejs dependencies.  
+`npm install --save prerender-node`
+
+3. Use the middleware to route your app's traffic to the prerender service.  
+   - *(f prerender service is running on localhost*  
+```
+app.use(require('prerender-node').set('prerenderServiceUrl', 'http://localhost:3000/'))
+```
+
+   - *if prerender service is running on a production environment*  
+```
+app.use(require('prerender-node').set('prerenderServiceUrl', 'http://prerenderservice.herokuapp.com/'))
+```
+
+3. Deploy your express web app.
+
+
+## References
+
+[[1]](https://stackoverflow.com/questions/50688828/heroku-unable-to-find-chromedriver-when-using-selenium) - add google chrome and chromedriver buildpacks  
+[[2]](https://github.com/prerender/prerender/issues/450) - add chromeFlags  
+[[3]](https://prerender.io/documentation) - documentation  
+[[4]](https://mono.software/2016/02/22/Installing-Prerender-io/) - optimization
+
+
+### Demo
+
+[[1]](http://prerenderservice.herokuapp.com/https://www.google.com/) - weaponsforge/prerender service live  
+[[2]](https://github.com/weaponsforge/prerender-app) - weaponsforge/prerender-app - express web app that uses  this prerender service
+
 
 @weaponsforge  
 20200404
+
+
+---
 
 
 
