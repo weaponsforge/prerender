@@ -24,7 +24,7 @@ This forked [**prerender**](https://github.com/prerender/prerender) project will
 
 - Heroku App Setup
 - Prerenderer Service Setup
-- Test and Deploy Prenderer to Heroku
+- Test and Deploy Prerender to Heroku
 - Using the Service: Create an Express Web App
 
 
@@ -73,11 +73,16 @@ Install chrome on your heroku app.
 4. Create a **.env** file from **.env.example**.
 	- Set `NODE_ENV=development` when working in development or localhost mode.
 	- Set `NODE_ENV=production` when working or deploying to production.
+	- Go to the heroku app's dashboard **Settings** -> **Config Vars**.
+		- Create a config variable **NODE_ENV** = *production*
 
 
-4. Deploy to heroku.
+### Test and Deploy Prenderer to Heroku
 
-5. Test the deployment.  
+1. Deploy to heroku.  
+`git push heroku master`
+
+2. Test the deployment.  
    - [http://prerenderservice.herokuapp.com/render?url=https://www.google.com/](http://prerenderservice.herokuapp.com/render?url=https://www.google.com/) or 
    - [http://prerenderservice.herokuapp.com/https://www.google.com/](http://prerenderservice.herokuapp.com/https://www.google.com/)
 
